@@ -37,13 +37,13 @@ const run = async () => {
       core.setFailed("Required field `site_name` was not provided");
     }
     const url = `https://deploy-preview-${PR_NUMBER}--${siteName}.netlify.app${basePath}`;
-    core.setOutput("url", url);
     const extraHeaders = core.getInput("request_headers");
     const headers = !extraHeaders ? {} : JSON.parse(extraHeaders)
     console.log(`Waiting for a 200 from: ${url}`);
     await waitForUrl(url, MAX_TIMEOUT, statusCodes, {
       headers,
     });
+    core.setOutput("url", url);
   } catch (error) {
     core.setFailed(error.message);
   }
