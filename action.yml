@@ -17,6 +17,11 @@ inputs:
     description: "Base path to test"
     required: false
     default: "/"
+  status_codes:
+    description: "List (as multiline string) of status codes to wait for"
+    required: false
+    default: |
+      200
 outputs:
   url:
     description: "The fully qualified deploy preview URL"

@@ -2,11 +2,16 @@ const core = require("@actions/core");
 const github = require("@actions/github");
 const axios = require("axios");
 
-const waitForUrl = async (url, MAX_TIMEOUT, { headers }) => {
+const waitForUrl = async (url, MAX_TIMEOUT, statusCodes, { headers }) => {
   const iterations = MAX_TIMEOUT / 2;
   for (let i = 0; i < iterations; i++) {
     try {
-      await axios.get(url, { headers });
+      await axios.get(url, {
+        headers,
+        validateStatus: function(status) {
+          return statusCodes.includes(status);
+        },
+      });
       return;
     } catch (e) {
       console.log("Url unavailable, retrying...");
@@ -25,6 +30,7 @@ const run = async () => {
       );
     }
     const MAX_TIMEOUT = Number(core.getInput("max_timeout")) || 60;
+    const statusCodes = core.getMultilineInput("status_codes").map(code => Number(code)) || [200];
     const siteName = core.getInput("site_name");
     const basePath = core.getInput("base_path");
     if (!siteName) {
@@ -35,7 +41,7 @@ const run = async () => {
     const extraHeaders = core.getInput("request_headers");
     const headers = !extraHeaders ? {} : JSON.parse(extraHeaders)
     console.log(`Waiting for a 200 from: ${url}`);
-    await waitForUrl(url, MAX_TIMEOUT, {
+    await waitForUrl(url, MAX_TIMEOUT, statusCodes, {
       headers,
     });
   } catch (error) {

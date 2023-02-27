@@ -20,6 +20,10 @@ Optional — The amount of time to spend waiting on Netlify. Defaults to `60` se
 
 Optional — The page that needs to be tested for 200. Defaults to "/" (eg: `https://{site_name}.netlify.app{base_path}`)
 
+### `status_codes`
+
+Optional — List of status codes to wait for. Useful for waiting for a Netlify login page (which returns 401)
+
 ## Outputs
 
 ### `url`
